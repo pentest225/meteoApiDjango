@@ -25,7 +25,7 @@ SECRET_KEY = 'rhzjy@-oq+^3cdzmgu)t_e3=+ei3v=@6obx564bq3#p%1z5q^&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['djangometeoapi.herokuapp.com','127.0.0.1']
 
 
 # Application definition
