@@ -12,50 +12,55 @@ url = 'https://www.tameteo.com/meteo_Abidjan-Afrique-Cote+dIvoire-Abidjan-DIAP-1
 
 def getmeteo(url):
 
+    try:
+        req = requests.get(url)
 
-    req = requests.get(url)
+        print(req.status_code)
 
-    print(req.status_code)
+        html_doc = req.text
+        soup = BeautifulSoup(html_doc, 'html.parser')
 
-    html_doc = req.text
-    soup = BeautifulSoup(html_doc, 'html.parser')
+        divbloc = soup.find('span', attrs={ 'class':'columnas zona-contenido padding-top-doble horas-sol-lunas' })
 
-    divbloc = soup.find('span', attrs={ 'class':'columnas zona-contenido padding-top-doble horas-sol-lunas' })
+        print(len(divbloc))
 
-    print(len(divbloc))
+        principale = divbloc.find('table', attrs={ 'class':'tabla-horas' })
 
-    principale = divbloc.find('table', attrs={ 'class':'tabla-horas' })
+        table = principale.find_all('tr')
+        i = 1
+        data = []
+        for it in table:
+            meteo = {}
+            if i % 2 == 0:
+                #print(it.text)
+                hora = it.find('span', attrs={'class':'hora'})
+                temp = it.find('td', attrs={'class':'temperatura changeUnitT'})
+                description = it.find('td', attrs={'class':'descripcion'})
+                vent = it.find('span', attrs={'class':'datos-viento'})
+                descvent = vent.find('strong')
 
-    table = principale.find_all('tr')
-    i = 1
-    data = []
-    for it in table:
-        meteo = {}
-        if i % 2 == 0:
-            #print(it.text)
-            hora = it.find('span', attrs={'class':'hora'})
-            temp = it.find('td', attrs={'class':'temperatura changeUnitT'})
-            description = it.find('td', attrs={'class':'descripcion'})
-            vent = it.find('span', attrs={'class':'datos-viento'})
-            descvent = vent.find('strong')
+                heure = hora.text
+                temperature = temp.text
+                descripcion = description.text
+                directionvend = vent.text
 
-            heure = hora.text
-            temperature = temp.text
-            descripcion = description.text
-            directionvend = vent.text
+                meteo['heure'] = heure
+                meteo['temperature'] = temperature
+                meteo['directionvend'] = directionvend
+                meteo['descripcion'] = descripcion
 
-            meteo['heure'] = heure
-            meteo['temperature'] = temperature
-            meteo['directionvend'] = directionvend
-            meteo['descripcion'] = descripcion
+                data.append(meteo)
 
-            data.append(meteo)
+            else:
 
-        else:
+                pass
 
-            pass
-
-        i += 1
+            i += 1
+    except:
+            data={
+                'error':True,
+                'message':'somme fing is wrong ;-('
+            }
 
     return data
 
